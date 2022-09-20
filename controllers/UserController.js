@@ -3,6 +3,7 @@ import Crypto from "crypto";
 import jwt from "jsonwebtoken";
 import {
   activatateUser,
+  fetchAllUsers,
   getDBUserByEmail,
   insertAccountConfirmationCode,
   insertToken,
@@ -22,7 +23,7 @@ import {
  */
 export const signup = async (req, res) => {
   console.log("signup requested", req.body);
-  const { firstname, lastname, phone, username, userType } = req.body;
+  const { firstname, lastname, phone, username, userType, parent } = req.body;
   const dBUserByEmail = await getDBUserByEmail({ username: username });
   if (dBUserByEmail) {
     return res.status(401).send({ message: "User Already Exists" });
@@ -35,6 +36,7 @@ export const signup = async (req, res) => {
     phone: phone,
     userType: userType,
     isActive: false,
+    parent: parent,
   });
 
   let resetToken = Crypto.randomBytes(16).toString("hex");
@@ -57,11 +59,12 @@ export const signup = async (req, res) => {
     });
   }
 
-  const mailsuccess = await sendPasswordResetMail(
-    username,
-    hashedResetToken,
-    registerResult.insertedId
-  );
+  //TODO: remove below comment before DPL
+  // const mailsuccess = await sendPasswordResetMail(
+  //   username,
+  //   hashedResetToken,
+  //   registerResult.insertedId
+  // );
 
   res.status(200).send({
     message: "User was registered successfully! ",
@@ -71,7 +74,7 @@ export const signup = async (req, res) => {
 
 export const login = async (req, res) => {
   const { username, password } = req.body;
-
+  console.log(username, password);
   const dBUserByEmail = await getDBUserByEmail({ username: username });
 
   if (!dBUserByEmail) {
@@ -206,4 +209,23 @@ export const logoutUser = async (req, res) => {
   // TODO: list token as expired or blacklisted
 
   return res.send({ success: true, message: "user logged out successfully" });
+};
+
+export const getAllUsers = async (req, res) => {
+  try {
+    const { username, userType } = req.body;
+    console.log("inside getAllusers", username, userType);
+    const response = await fetchAllUsers(username, userType);
+    console.log("userlist is---", response);
+    res.status(200).send({
+      message: "User Fetched Successfully",
+      success: true,
+      users: response,
+    });
+  } catch (error) {
+    return res.send({
+      message: "Something went wrong....Please try again later",
+      success: false,
+    });
+  }
 };

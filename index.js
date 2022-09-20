@@ -2,7 +2,7 @@ import cors from "cors";
 import dotenv from "dotenv";
 import express from "express";
 import { MongoClient } from "mongodb";
-import { authRouter } from "./routes/auth.js";
+import { userRouter } from "./routes/User.js";
 import http from "http";
 
 const corsOptions = {
@@ -38,4 +38,4 @@ app.get("/", (req, res) => {
   res.send({ message: "default request" });
 });
 
-app.use("/auth", authRouter);
+app.use("/auth", userRouter);

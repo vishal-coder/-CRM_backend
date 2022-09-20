@@ -7,7 +7,8 @@ import {
   resetpassword,
   signup,
   verifyEmail,
-} from "../controllers/AuthController.js";
+  getAllUsers,
+} from "../controllers/UserController.js";
 import {
   forgotPasswordValidation,
   loginValidation,
@@ -28,5 +29,6 @@ router.post("/forgotPassword", forgotPasswordValidation(), forgotPassword);
 router.post("/resetPassword", restPasswordValidation(), resetpassword);
 router.post("/verifyToken", verifyToken);
 router.post("/logoutUser", logoutUser);
+router.post("/allUsers", getAllUsers);
 
-export const authRouter = router;
+export const userRouter = router;

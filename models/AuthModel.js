@@ -53,3 +53,45 @@ export function insertAccountConfirmationCode(data, confirmationToken) {
 export async function isUserActive(data) {
   return client.db("CRM").collection("users").findOne(data);
 }
+
+export async function fetchAllUsers(username, userType) {
+  if (userType === "Admin") {
+    return client
+      .db("CRM")
+      .collection("users")
+      .find(
+        {},
+        {
+          firstname: 1,
+          lastname: 1,
+          phone: 1,
+          username: 1,
+          parent: 1,
+          userType: 1,
+          isActive: 1,
+          token: 0,
+          password: 0,
+        }
+      )
+      .toArray();
+  } else {
+    return client
+      .db("CRM")
+      .collection("users")
+      .find(
+        { parent: username },
+        {
+          firstname: 1,
+          lastname: 1,
+          phone: 1,
+          username: 1,
+          parent: 1,
+          userType: 1,
+          isActive: 1,
+          token: 0,
+          password: 0,
+        }
+      )
+      .toArray();
+  }
+}
