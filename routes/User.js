@@ -8,6 +8,7 @@ import {
   signup,
   verifyEmail,
   getAllUsers,
+  deleteUser,
 } from "../controllers/UserController.js";
 import {
   forgotPasswordValidation,
@@ -30,5 +31,6 @@ router.post("/resetPassword", restPasswordValidation(), resetpassword);
 router.post("/verifyToken", verifyToken);
 router.post("/logoutUser", logoutUser);
 router.post("/allUsers", getAllUsers);
+router.delete("/delete", deleteUser);
 
 export const userRouter = router;

@@ -3,6 +3,7 @@ import Crypto from "crypto";
 import jwt from "jsonwebtoken";
 import {
   activatateUser,
+  deleteUserByUsername,
   fetchAllUsers,
   getDBUserByEmail,
   insertAccountConfirmationCode,
@@ -219,6 +220,24 @@ export const getAllUsers = async (req, res) => {
     console.log("userlist is---", response);
     res.status(200).send({
       message: "User Fetched Successfully",
+      success: true,
+      users: response,
+    });
+  } catch (error) {
+    return res.send({
+      message: "Something went wrong....Please try again later",
+      success: false,
+    });
+  }
+};
+export const deleteUser = async (req, res) => {
+  try {
+    const { username } = req.body;
+    console.log("inside deleteUser", username);
+    const response = await deleteUserByUsername({ username: username });
+    console.log("deleteUser is---", response);
+    res.status(200).send({
+      message: "User Deleted Successfully",
       success: true,
       users: response,
     });

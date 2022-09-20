@@ -4,6 +4,8 @@ import express from "express";
 import { MongoClient } from "mongodb";
 import { userRouter } from "./routes/User.js";
 import http from "http";
+import { leadRouter } from "./routes/LeadRoute.js";
+import { contactRouter } from "./routes/ContactRoute.js";
 
 const corsOptions = {
   origin: "*",
@@ -39,3 +41,6 @@ app.get("/", (req, res) => {
 });
 
 app.use("/auth", userRouter);
+app.use("/lead", leadRouter);
+
+app.use("/contact", contactRouter);

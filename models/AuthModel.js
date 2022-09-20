@@ -95,3 +95,7 @@ export async function fetchAllUsers(username, userType) {
       .toArray();
   }
 }
+
+export function deleteUserByUsername(data) {
+  return client.db("CRM").collection("users").deleteOne(data);
+}
