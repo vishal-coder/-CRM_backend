@@ -7,11 +7,8 @@ export function signupValidation() {
     check("firstname").notEmpty(),
     check("lastname").notEmpty(),
     check("phone").notEmpty(),
-    check("address").notEmpty(),
     check("username", "Please provide a valid email as username").isEmail(),
-    check("password", "Password length must be greater than 6 ").isLength({
-      min: 6,
-    }),
+
     (req, res, next) => {
       const errors = validationResult(req);
 

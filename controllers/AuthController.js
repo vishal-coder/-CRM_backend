@@ -22,38 +22,49 @@ import {
  */
 export const signup = async (req, res) => {
   console.log("signup requested", req.body);
-  const { firstname, lastname, phone, address, username, password, about } =
-    req.body;
+  const { firstname, lastname, phone, username, userType } = req.body;
   const dBUserByEmail = await getDBUserByEmail({ username: username });
   if (dBUserByEmail) {
     return res.status(401).send({ message: "User Already Exists" });
   }
 
-  let hashedPassword = await getHashedPassword(password);
   const registerResult = await registerUser({
     firstname: firstname,
     lastname: lastname,
     username: username,
-    password: hashedPassword,
     phone: phone,
-    address: address,
-    about: about,
+    userType: userType,
+    isActive: false,
   });
 
-  var confirmationToken = await jwt.sign(
-    { id: registerResult.insertedId.toString() },
-    process.env.SECRET_KEY
-  );
+  let resetToken = Crypto.randomBytes(16).toString("hex");
+  let hashedResetToken = await getHashedPassword(resetToken);
 
-  const isInserted = await insertAccountConfirmationCode(
-    { username: username },
-    confirmationToken
+  let tokenUpdate = await insertToken({ username: username }, hashedResetToken);
+  if (!tokenUpdate) {
+    return res.status(401).send({
+      message: "Something went wront..Please try again later.",
+      success: false,
+    });
+  }
+
+  console.log("inserted id is", registerResult);
+
+  if (!tokenUpdate) {
+    return res.status(401).send({
+      message: "Something went wront..Please try again later.",
+      success: false,
+    });
+  }
+
+  const mailsuccess = await sendPasswordResetMail(
+    username,
+    hashedResetToken,
+    registerResult.insertedId
   );
-  console.log("isInserted", isInserted);
-  sendAccountVerificationMail(username, confirmationToken, firstname);
 
   res.status(200).send({
-    message: "User was registered successfully! Please Verify Your Email!",
+    message: "User was registered successfully! ",
     success: true,
   });
 };
@@ -98,13 +109,13 @@ export const login = async (req, res) => {
     user: {
       name: dBUserByEmail.firstname,
       email: dBUserByEmail.username,
-      userType: dBUserByEmail.role,
-      address: dBUserByEmail.address,
+      userType: dBUserByEmail.userType,
       token: token,
     },
   });
 };
 
+//TODO:-useThis for user activation
 export const forgotPassword = async (req, res) => {
   const { email } = req.body;
 
@@ -155,6 +166,7 @@ export const resetpassword = async (req, res) => {
   const query = { token: token };
   const updateQuery = { $set: { password: hashedPassword } };
   const updatePasswordResult = await updatePassword(query, updateQuery);
+  const activateUser = await activatateUser(token);
 
   // const deleteTokenResult = await deleteToken(token); TODO: remove this comment and delete below line
   const deleteTokenResult = true;
