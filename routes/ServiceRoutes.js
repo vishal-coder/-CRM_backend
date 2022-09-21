@@ -5,7 +5,11 @@ import {
   getLeads,
   MarkLeadAsContact,
 } from "../controllers/LeadController.js";
-import { createServiceRequest } from "../controllers/ServiceController.js";
+import {
+  createServiceRequest,
+  getServiceRequests,
+  updateServiceStatus,
+} from "../controllers/ServiceController.js";
 
 import { leadValidation } from "../validations/LeadValidation.js";
 
@@ -15,8 +19,7 @@ router.get("/", (req, res) => {
 });
 
 router.post("/create", createServiceRequest);
-router.post("/getAll", getLeads);
-router.delete("/delete", deleteLead);
-router.post("/markAsContact", MarkLeadAsContact);
+router.post("/getAll", getServiceRequests);
+router.put("/update", updateServiceStatus);
 
 export const serviceRouter = router;
