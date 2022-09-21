@@ -1,12 +1,11 @@
-import { ObjectId } from "mongodb";
 import { client } from "../index.js";
 
-export function insertLead(data) {
-  console.log("indide create lead model");
-  return client.db("CRM").collection("leads").insertOne(data);
+export function insertServiceRequest(data) {
+  console.log("indide create insertServiceRequest");
+  return client.db("CRM").collection("servicereqs").insertOne(data);
 }
 
-export async function fetchLeads(username, userType) {
+export async function fetchServiceRequest(username, userType) {
   let query = {};
   if (userType === "Employee") {
     query = { createdBy: username };
@@ -15,7 +14,7 @@ export async function fetchLeads(username, userType) {
   }
   return client
     .db("CRM")
-    .collection("leads")
+    .collection("servicereq")
     .find(query, {
       firstname: 1,
       lastname: 1,
@@ -28,7 +27,7 @@ export async function fetchLeads(username, userType) {
     .toArray();
 }
 
-export function getManagerLeads(username) {
+export function getManagerServiceRequest(username) {
   console.log("inside manager get leads");
   return client
     .db("CRM")
@@ -36,7 +35,7 @@ export function getManagerLeads(username) {
     .aggregate([
       {
         $lookup: {
-          from: "leads",
+          from: "servicereq",
           localField: "username",
           foreignField: "createdBy",
           as: "leads",
@@ -53,26 +52,12 @@ export function getManagerLeads(username) {
     .toArray();
 }
 
-export function deleteLeadById(id) {
+export function updateServiceRequestById(id) {
   return client
     .db("CRM")
-    .collection("leads")
-    .deleteOne({ _id: ObjectId(id) });
-}
-
-export function updateLeadById(id) {
-  return client
-    .db("CRM")
-    .collection("leads")
+    .collection("servicereq")
     .updateOne(
       { _id: ObjectId(id) },
       { $set: { status: "Marked As Contact" } }
     );
-}
-
-export function getLeadById(id) {
-  return client
-    .db("CRM")
-    .collection("leads")
-    .findOne({ _id: ObjectId(id) });
 }

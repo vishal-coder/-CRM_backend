@@ -1,8 +1,11 @@
+import { insertContact } from "../models/ContactModel.js";
 import {
   deleteLeadById,
   fetchLeads,
+  getLeadById,
   getManagerLeads,
   insertLead,
+  updateLeadById,
 } from "../models/LeadModel.js";
 
 export const createLead = async (req, res) => {
@@ -52,7 +55,7 @@ export const getLeads = async (req, res) => {
     }
     console.log("getLeads response  is---", response);
     res.status(200).send({
-      message: "Lead Created Successfully",
+      message: "Lead fetched Successfully",
       success: true,
       leads: response,
     });
@@ -75,6 +78,46 @@ export const deleteLead = async (req, res) => {
     console.log("deleteLead response  is---", response);
     res.status(200).send({
       message: "Lead deleted Successfully",
+      success: true,
+      leads: response,
+    });
+  } catch (error) {
+    return res.send({
+      message: "Something went wrong....Please try again later",
+      success: false,
+    });
+  }
+};
+
+export const MarkLeadAsContact = async (req, res) => {
+  try {
+    const { id } = req.body;
+
+    console.log("inside MarkLeadAsContact----------------", id);
+
+    const response = await updateLeadById(id);
+
+    console.log("response of update lead is", response);
+    const lead = await getLeadById(id);
+    console.log("lead", lead);
+    const contact = {
+      firstname: lead.firstname,
+      lastname: lead.lastname,
+      phone: lead.phone,
+      email: lead.email,
+      category: lead.category,
+      createdBy: lead.createdBy,
+      category: "Contact",
+      status: "Pending Payment",
+      createdOn: new Date(),
+    };
+    console.log("contact", contact);
+    const contactResult = await insertContact(contact);
+
+    console.log("MarkLeadAsContact contactResult  is---", contactResult);
+
+    res.status(200).send({
+      message: "Lead updated Successfully",
       success: true,
       leads: response,
     });

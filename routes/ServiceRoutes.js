@@ -5,6 +5,7 @@ import {
   getLeads,
   MarkLeadAsContact,
 } from "../controllers/LeadController.js";
+import { createServiceRequest } from "../controllers/ServiceController.js";
 
 import { leadValidation } from "../validations/LeadValidation.js";
 
@@ -13,9 +14,9 @@ router.get("/", (req, res) => {
   res.send("lead route working");
 });
 
-router.post("/create", leadValidation(), createLead);
+router.post("/create", createServiceRequest);
 router.post("/getAll", getLeads);
 router.delete("/delete", deleteLead);
 router.post("/markAsContact", MarkLeadAsContact);
 
-export const leadRouter = router;
+export const serviceRouter = router;

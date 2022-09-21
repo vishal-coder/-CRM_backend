@@ -6,6 +6,7 @@ import { userRouter } from "./routes/User.js";
 import http from "http";
 import { leadRouter } from "./routes/LeadRoute.js";
 import { contactRouter } from "./routes/ContactRoute.js";
+import { serviceRouter } from "./routes/ServiceRoutes.js";
 
 const corsOptions = {
   origin: "*",
@@ -44,3 +45,4 @@ app.use("/auth", userRouter);
 app.use("/lead", leadRouter);
 
 app.use("/contact", contactRouter);
+app.use("/service", serviceRouter);
