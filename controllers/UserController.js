@@ -36,7 +36,7 @@ export const signup = async (req, res) => {
     username: username,
     phone: phone,
     userType: userType,
-    isActive: false,
+    isActive: "false",
     parent: parent,
   });
 

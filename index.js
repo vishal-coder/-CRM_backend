@@ -7,6 +7,7 @@ import http from "http";
 import { leadRouter } from "./routes/LeadRoute.js";
 import { contactRouter } from "./routes/ContactRoute.js";
 import { serviceRouter } from "./routes/ServiceRoutes.js";
+import { paymentRouter } from "./routes/PaymentRouter.js";
 
 const corsOptions = {
   origin: "*",
@@ -46,3 +47,4 @@ app.use("/lead", leadRouter);
 
 app.use("/contact", contactRouter);
 app.use("/service", serviceRouter);
+app.use("/payment", paymentRouter);
