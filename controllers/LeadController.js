@@ -1,4 +1,5 @@
 import {
+  deleteLeadById,
   fetchLeads,
   getManagerLeads,
   insertLead,
@@ -52,6 +53,28 @@ export const getLeads = async (req, res) => {
     console.log("getLeads response  is---", response);
     res.status(200).send({
       message: "Lead Created Successfully",
+      success: true,
+      leads: response,
+    });
+  } catch (error) {
+    return res.send({
+      message: "Something went wrong....Please try again later",
+      success: false,
+    });
+  }
+};
+
+export const deleteLead = async (req, res) => {
+  try {
+    const { id } = req.body;
+
+    console.log("inside deleteLead----------------", id);
+
+    const response = await deleteLeadById(id);
+
+    console.log("deleteLead response  is---", response);
+    res.status(200).send({
+      message: "Lead deleted Successfully",
       success: true,
       leads: response,
     });

@@ -1,3 +1,4 @@
+import { ObjectId } from "mongodb";
 import { client } from "../index.js";
 
 export function insertLead(data) {
@@ -50,4 +51,11 @@ export function getManagerLeads(username) {
       { $unwind: { path: "$leads" } },
     ])
     .toArray();
+}
+
+export function deleteLeadById(id) {
+  return client
+    .db("CRM")
+    .collection("leads")
+    .deleteOne({ _id: ObjectId(id) });
 }
