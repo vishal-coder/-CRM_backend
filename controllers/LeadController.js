@@ -2,6 +2,7 @@ import { insertContact } from "../models/ContactModel.js";
 import {
   deleteLeadById,
   fetchLeads,
+  getLeadByEmail,
   getLeadById,
   getManagerLeads,
   insertLead,
@@ -23,6 +24,14 @@ export const createLead = async (req, res) => {
       createdOn: new Date(),
     };
     console.log("inside createLead--", data);
+    const dBLeadByEmail = await getLeadByEmail({ email: email });
+    console.log("dBLeadByEmail response  is---", dBLeadByEmail);
+
+    if (dBLeadByEmail) {
+      return res
+        .status(401)
+        .send({ message: "Lead By same Email Already Exists" });
+    }
     const response = await insertLead(data);
     console.log("createLead response  is---", response);
     res.status(200).send({

@@ -76,3 +76,7 @@ export function getLeadById(id) {
     .collection("leads")
     .findOne({ _id: ObjectId(id) });
 }
+
+export async function getLeadByEmail(data) {
+  return client.db("CRM").collection("leads").findOne(data);
+}
