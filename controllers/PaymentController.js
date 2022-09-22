@@ -8,7 +8,6 @@ import {
 export const createPaymentLink = async (req, res) => {
   const { id } = req.body;
   try {
-    console.log("inside createPaymentLink--", id);
     var instance = new Razorpay({
       key_id: `${process.env.RZ_KEY_ID}`,
       key_secret: `${process.env.RZ_KEY_SECRET}`,
@@ -34,7 +33,7 @@ export const createPaymentLink = async (req, res) => {
         policy_name: "EasyCRM Basic",
       },
       // callback_url: `${process.env.REACT_APP_CLIENT}`,
-      callback_url: "https://example-callback-url.com/",
+      callback_url: "https://easycrm.netlify.app/paymentPage",
       callback_method: "get",
     });
 

@@ -9,7 +9,6 @@ import {
   getLeadById,
   getManagerLeads,
   insertLead,
-  updateLeadById,
 } from "../models/LeadModel.js";
 
 export const createLead = async (req, res) => {
@@ -26,9 +25,8 @@ export const createLead = async (req, res) => {
       source: source,
       createdOn: new Date(),
     };
-    console.log("inside createLead--", data);
+
     const dBLeadByEmail = await getLeadByEmail({ email: email });
-    console.log("dBLeadByEmail response  is---", dBLeadByEmail);
 
     if (dBLeadByEmail) {
       return res
@@ -42,10 +40,8 @@ export const createLead = async (req, res) => {
         },
       },
     ];
-    console.log("calling contact emmiter from lead controller");
     newLeadEmmiter(client, 10000, pipeline);
     const response = await insertLead(data);
-    console.log("createLead response  is---", response);
     res.status(200).send({
       message: "Lead Created Successfully",
       success: true,
@@ -63,18 +59,13 @@ export const getLeads = async (req, res) => {
   try {
     const { username, userType } = req.body;
 
-    console.log(
-      "inside getLeads----------------------------------------------------------",
-      username,
-      userType
-    );
     let response = null;
     if (userType === "Manager") {
       response = await getManagerLeads(username);
     } else {
       response = await fetchLeads(username, userType);
     }
-    console.log("getLeads response  is---", response);
+
     res.status(200).send({
       message: "Lead fetched Successfully",
       success: true,
@@ -92,11 +83,7 @@ export const deleteLead = async (req, res) => {
   try {
     const { id } = req.body;
 
-    console.log("inside deleteLead----------------", id);
-
     const response = await deleteLeadById(id);
-
-    console.log("deleteLead response  is---", response);
     res.status(200).send({
       message: "Lead deleted Successfully",
       success: true,
@@ -113,11 +100,7 @@ export const deleteLead = async (req, res) => {
 export const MarkLeadAsContact = async (req, res) => {
   try {
     const { id } = req.body;
-
-    console.log("inside MarkLeadAsContact----------------", id);
-
     const lead = await getLeadById(id);
-    console.log("lead", lead);
     const contact = {
       firstname: lead.firstname,
       lastname: lead.lastname,
@@ -129,7 +112,6 @@ export const MarkLeadAsContact = async (req, res) => {
       status: "Pending Payment",
       createdOn: new Date(),
     };
-    console.log("contact", contact);
 
     const pipeline = [
       {
@@ -138,13 +120,10 @@ export const MarkLeadAsContact = async (req, res) => {
         },
       },
     ];
-    console.log("calling contact emmiter from lead controller");
+
     newContactEmmiter(client, 10000, pipeline);
     const contactResult = await insertContact(contact);
-    // const response = await updateLeadById(id);
     const response = await deleteLeadById(id);
-
-    console.log("MarkLeadAsContact contactResult  is---", contactResult);
 
     res.status(200).send({
       message: "Lead updated Successfully",

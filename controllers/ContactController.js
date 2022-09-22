@@ -47,15 +47,13 @@ export const createContact = async (req, res) => {
 export const getContacts = async (req, res) => {
   try {
     const { username, userType } = req.body;
-
-    console.log("inside getLeads-----", username, userType);
     let response = null;
     if (userType === "Manager") {
       response = await getManagerContacts(username);
     } else {
       response = await fetchContacts(username, userType);
     }
-    console.log("getContact response  is---", response);
+
     res.status(200).send({
       message: "Contact fetched Successfully",
       success: true,

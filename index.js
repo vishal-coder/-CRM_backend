@@ -71,7 +71,6 @@ io.on("connection", function (socket) {
   });
 
   socket.on("disconnect", () => {
-    console.log("user disconnected");
     activeUsers.forEach((user) => {
       if (user.socketId == socket.id) {
         activeUsers.delete(user);

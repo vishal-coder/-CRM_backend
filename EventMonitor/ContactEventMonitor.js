@@ -10,11 +10,8 @@ export async function newContactEmmiter(
   const changeStream = collection.watch(pipeline);
 
   changeStream.on("change", async (next) => {
-    console.log("mongoevnt detected", next);
-    console.log("mongoevnt activeUsers", activeUsers);
     activeUsers.forEach((user) => {
       if (user.user.userType === "Admin") {
-        console.log("admin detected");
         io.to(user.socketId).emit("new contact", next);
       }
     });

@@ -23,7 +23,6 @@ import {
  *
  */
 export const signup = async (req, res) => {
-  console.log("signup requested", req.body);
   const { firstname, lastname, phone, username, userType, parent } = req.body;
   const dBUserByEmail = await getDBUserByEmail({ username: username });
   if (dBUserByEmail) {
@@ -61,11 +60,11 @@ export const signup = async (req, res) => {
   }
 
   //TODO: remove below comment before DPL
-  // const mailsuccess = await sendPasswordResetMail(
-  //   username,
-  //   hashedResetToken,
-  //   registerResult.insertedId
-  // );
+  const mailsuccess = await sendPasswordResetMail(
+    username,
+    hashedResetToken,
+    registerResult.insertedId
+  );
 
   res.status(200).send({
     message: "User was registered successfully! ",
@@ -75,7 +74,7 @@ export const signup = async (req, res) => {
 
 export const login = async (req, res) => {
   const { username, password } = req.body;
-  console.log(username, password);
+
   const dBUserByEmail = await getDBUserByEmail({ username: username });
 
   if (!dBUserByEmail) {
@@ -83,7 +82,7 @@ export const login = async (req, res) => {
   }
 
   const isActive = dBUserByEmail.isActive;
-  console.log("isActive", dBUserByEmail.isActive);
+
   if (!isActive) {
     return res.status(401).send({
       message: "Before login, Please verify your email",
@@ -97,7 +96,6 @@ export const login = async (req, res) => {
   );
 
   if (!isPasswordMathced) {
-    console.log("Invalid Credentials");
     return res.send({ message: "Invalid Credentials", success: false });
   }
 
@@ -119,7 +117,6 @@ export const login = async (req, res) => {
   });
 };
 
-//TODO:-useThis for user activation
 export const forgotPassword = async (req, res) => {
   const { email } = req.body;
 
@@ -215,9 +212,9 @@ export const logoutUser = async (req, res) => {
 export const getAllUsers = async (req, res) => {
   try {
     const { username, userType } = req.body;
-    console.log("inside getAllusers", username, userType);
+
     const response = await fetchAllUsers(username, userType);
-    console.log("userlist is---", response);
+
     res.status(200).send({
       message: "User Fetched Successfully",
       success: true,
@@ -233,9 +230,9 @@ export const getAllUsers = async (req, res) => {
 export const deleteUser = async (req, res) => {
   try {
     const { username } = req.body;
-    console.log("inside deleteUser", username);
+
     const response = await deleteUserByUsername({ username: username });
-    console.log("deleteUser is---", response);
+
     res.status(200).send({
       message: "User Deleted Successfully",
       success: true,
