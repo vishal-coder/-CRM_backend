@@ -1,4 +1,5 @@
 import { newContactEmmiter } from "../EventMonitor/ContactEventMonitor.js";
+import { newLeadEmmiter } from "../EventMonitor/LeadEventMonitor.js";
 import { client } from "../index.js";
 import { insertContact } from "../models/ContactModel.js";
 import {
@@ -34,6 +35,15 @@ export const createLead = async (req, res) => {
         .status(401)
         .send({ message: "Lead By same Email Already Exists" });
     }
+    const pipeline = [
+      {
+        $match: {
+          operationType: "insert",
+        },
+      },
+    ];
+    console.log("calling contact emmiter from lead controller");
+    newLeadEmmiter(client, 10000, pipeline);
     const response = await insertLead(data);
     console.log("createLead response  is---", response);
     res.status(200).send({
