@@ -116,9 +116,6 @@ export const MarkLeadAsContact = async (req, res) => {
 
     console.log("inside MarkLeadAsContact----------------", id);
 
-    const response = await updateLeadById(id);
-
-    console.log("response of update lead is", response);
     const lead = await getLeadById(id);
     console.log("lead", lead);
     const contact = {
@@ -144,6 +141,8 @@ export const MarkLeadAsContact = async (req, res) => {
     console.log("calling contact emmiter from lead controller");
     newContactEmmiter(client, 10000, pipeline);
     const contactResult = await insertContact(contact);
+    // const response = await updateLeadById(id);
+    const response = await deleteLeadById(id);
 
     console.log("MarkLeadAsContact contactResult  is---", contactResult);
 
