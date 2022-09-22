@@ -1,3 +1,5 @@
+import { newContactEmmiter } from "../EventMonitor/ContactEventMonitor.js";
+import { client } from "../index.js";
 import { insertContact } from "../models/ContactModel.js";
 import {
   deleteLeadById,
@@ -121,6 +123,16 @@ export const MarkLeadAsContact = async (req, res) => {
       createdOn: new Date(),
     };
     console.log("contact", contact);
+
+    const pipeline = [
+      {
+        $match: {
+          operationType: "insert",
+        },
+      },
+    ];
+    console.log("calling contact emmiter from lead controller");
+    newContactEmmiter(client, 10000, pipeline);
     const contactResult = await insertContact(contact);
 
     console.log("MarkLeadAsContact contactResult  is---", contactResult);
@@ -131,6 +143,7 @@ export const MarkLeadAsContact = async (req, res) => {
       leads: response,
     });
   } catch (error) {
+    console.log(error);
     return res.send({
       message: "Something went wrong....Please try again later",
       success: false,

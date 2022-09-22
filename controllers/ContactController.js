@@ -1,3 +1,4 @@
+import { newContactEmmiter } from "../EventMonitor/ContactEventMonitor.js";
 import {
   fetchContacts,
   getManagerContacts,
@@ -19,9 +20,17 @@ export const createContact = async (req, res) => {
       Payment: "Pending",
       createdOn: new Date(),
     };
-    console.log("inside createContact--", data);
+
+    const pipeline = [
+      {
+        $match: {
+          operationType: "insert",
+        },
+      },
+    ];
+    newContactEmmiter(client, 10000, pipeline);
     const response = await insertContact(data);
-    console.log("createContact response  is---", response);
+
     res.status(200).send({
       message: "Contact Created Successfully",
       success: true,

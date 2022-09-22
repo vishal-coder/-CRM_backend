@@ -7,42 +7,50 @@ import {
 } from "../models/PaymentModal.js";
 export const createPaymentLink = async (req, res) => {
   const { id } = req.body;
+  try {
+    console.log("inside createPaymentLink--", id);
+    var instance = new Razorpay({
+      key_id: `${process.env.RZ_KEY_ID}`,
+      key_secret: `${process.env.RZ_KEY_SECRET}`,
+    });
 
-  console.log("inside createPaymentLink--", id);
-  var instance = new Razorpay({
-    key_id: `${process.env.RZ_KEY_ID}`,
-    key_secret: `${process.env.RZ_KEY_SECRET}`,
-  });
+    const link = await instance.paymentLink.create({
+      amount: 100000,
+      currency: "INR",
+      accept_partial: false,
+      first_min_partial_amount: 100,
+      description: "For XYZ purpose",
+      customer: {
+        name: "Gaurav Kumar",
+        email: "test@test.com",
+        contact: "+911234567890",
+      },
+      notify: {
+        sms: true,
+        email: true,
+      },
+      reminder_enable: true,
+      notes: {
+        policy_name: "EasyCRM Basic",
+      },
+      // callback_url: `${process.env.REACT_APP_CLIENT}`,
+      callback_url: "https://example-callback-url.com/",
+      callback_method: "get",
+    });
 
-  const link = await instance.paymentLink.create({
-    amount: 100000,
-    currency: "INR",
-    accept_partial: false,
-    first_min_partial_amount: 100,
-    description: "For XYZ purpose",
-    customer: {
-      name: "Gaurav Kumar",
-      email: "test@test.com",
-      contact: "+911234567890",
-    },
-    notify: {
-      sms: true,
-      email: true,
-    },
-    reminder_enable: true,
-    notes: {
-      policy_name: "EasyCRM Basic",
-    },
-    callback_url: `${process.env.REACT_APP_CLIENT}`,
-    callback_method: "get",
-  });
-
-  const result = await updatePaymentId(id, link.id);
-  return res.status(200).send({
-    message: "Payment Link Created Successfully",
-    success: true,
-    paymentLink: link.short_url,
-  });
+    const result = await updatePaymentId(id, link.id);
+    return res.status(200).send({
+      message: "Payment Link Created Successfully",
+      success: true,
+      paymentLink: link.short_url,
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(200).send({
+      message: "Payment Link creation failed",
+      success: false,
+    });
+  }
 };
 
 export const verifyPaymentStatus = async (req, res) => {
